@@ -1,37 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { getAllTasks, clearAll } from "../../features/AsyncStorageTask";
+import { getAllTasks, clearAll, removeValue } from "../../features/AsyncStorageTask";
 import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
-const Item = ({ title, description }) => {
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { GetTask } from "./GetTask";
+
+const Stack = createStackNavigator()
+
+const Item = ({ item }) => {
 	return (
 		<View style={ styles.item }>
-			<Text style={ styles.taskTitle }>{ title }</Text>
-			<Text style={ styles.taskDescription }>{ description }</Text>
+			<View style={ styles.infos }>
+				<Text style={ styles.taskTitle }>{ item.taskInfo.taskTitle }</Text>
+				<Text style={ styles.taskDescription }>{ item.taskInfo.taskDescription }</Text>
+			</View>
+			<View style={ styles.actions }>
+				<TouchableOpacity
+					onPress={ () => removeValue(item.taskKey) }
+				>
+					<View>
+						<FontAwesomeIcon icon={ faTrashAlt } style={ styles.buttonTrash }/>
+					</View>
+				</TouchableOpacity>
+			</View>
 		</View>
+
 	)
 }
 
-export const GetAllTasks = () => {
+const GetAllTasksScreen = ({ navigation }) => {
 	const [allTasks, setAllTasks] = useState([])
 
 	useEffect(() => {
 		getAllTasks().then(response => setAllTasks(response)).catch(error => console.log(error))
-	}, [])
+	})
 
 	const renderItem = ({ item }) => (
-		<Item title={ item.taskInfo.taskTitle } description={ item.taskInfo.taskDescription }/>
+		<TouchableOpacity onPress={ () => navigation.navigate('GetTask', item.taskKey) }>
+			<Item item={ item } style={ styles.shadow }/>
+		</TouchableOpacity>
 	)
 
 	return (
 		<View style={ styles.container }>
-			<Text styles={ styles.title }>Listes des taches</Text>
+			<Text style={ styles.title }>LISTES DES TÂCHES</Text>
 			<TouchableOpacity
 				onPress={ () => clearAll() }
-				style={ [styles.button, styles.buttonSuccess, styles.shadow] }
+				style={ [styles.button, styles.buttonDelette, styles.shadow] }
 			>
-				<Text style={ styles.textButton }>Supprimer toutes les tâches</Text>
+				<Text style={ styles.textButton }>SUPPRIMER TOUT</Text>
 			</TouchableOpacity>
-			<SafeAreaView style={styles.list}>
+			<SafeAreaView style={ styles.list }>
 				<FlatList
 					data={ allTasks }
 					renderItem={ renderItem }
@@ -42,23 +64,38 @@ export const GetAllTasks = () => {
 	)
 }
 
+export const GetAllTasks = () => {
+	return (
+		<Stack.Navigator>
+			<Stack.Screen name="GetAllTasksScreen"
+						  component={ GetAllTasksScreen }
+						  options={ { title: 'Liste des tâches' } }/>
+			<Stack.Screen name="GetTask"
+						  component={ GetTask }
+						  options={ { title: 'Détail' } }/>
+		</Stack.Navigator>
+	)
+}
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#eee',
+
 		flexDirection: 'column',
 
 		textAlign: 'center',
+		paddingHorizontal: 10,
 	},
 	list: {
 		flex: 1,
 
-
 		backgroundColor: '#eee',
-
 	},
 	item: {
-		flex: 0.5,
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
 
 
 		padding: 20,
@@ -70,9 +107,27 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fafafa',
 
 	},
+	taskTitle: {
+		fontSize: 15,
+		fontWeight: 'bold'
+	},
+	taskDescription: {
+		backgroundColor: '#fafafa',
+	},
+
+	infos: {
+		flex: 1,
+	},
+
+	actions: {
+		flex: 0.1,
+	},
+
 	title: {
 		fontSize: 25,
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		textAlign: 'center',
+		marginVertical: 20,
 	},
 
 	button: {
@@ -82,7 +137,29 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 
-	buttonSuccess: {
-		backgroundColor: '#c3e88d',
+	buttonDelette: {
+		backgroundColor: '#e88d8d',
+	},
+
+	buttonTrash: {
+		color: '#e88d8d',
+		alignSelf: 'center',
+	},
+
+	textButton: {
+		textAlign: 'center',
+		fontWeight: 'bold',
+	},
+
+	shadow: {
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+
+		elevation: 5,
 	},
 });

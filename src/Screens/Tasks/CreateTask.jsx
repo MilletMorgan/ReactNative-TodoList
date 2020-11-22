@@ -1,16 +1,30 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { getAllTasks, storeData } from "../../features/AsyncStorageTask";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { storeData } from "../../features/AsyncStorageTask";
 
-const createTask = (taskTitle, taskDescription) => {
-	const newTask = { taskTitle: taskTitle, tastDescription: taskDescription }
+const createTask = (taskTitle, taskDescription, navigation) => {
+	const newTask = { taskTitle: taskTitle, taskDescription: taskDescription }
 
-	storeData(newTask).then(() => console.log("La tâche à bien été créer.")).catch(error => console.log(error))
+	const ActionOnCreate = () => {
+		Alert.alert(
+			`La tâche "${ taskTitle }" à bien été créée.`,
+			"",
+			[
+				{
+					text: "Cancel",
+					onPress: () => console.log("Cancel Pressed"),
+					style: "cancel"
+				},
+				{ text: "OK", onPress: () => navigation.navigate('GetAllTasks') }
+			],
+			{ cancelable: false }
+		)
+	}
 
-	// getAllTasks().then(response => console.log(response)).catch(error => console.log(error))
+	storeData(newTask).then(ActionOnCreate).catch(error => console.log(error))
 }
 
-export const CreateTask = () => {
+export const CreateTask = ({ navigation }) => {
 	const [state, setState] = useState({
 		taskTitle: '',
 		taskDescription: '',
@@ -22,8 +36,7 @@ export const CreateTask = () => {
 
 	return (
 		<View style={ styles.container }>
-
-			<Text style={ styles.title }>Créer une nouvelle tâche</Text>
+			<Text style={ styles.title }>NOUVELLE TÂCHE</Text>
 
 			<Text>Titre</Text>
 			<TextInput
@@ -35,20 +48,19 @@ export const CreateTask = () => {
 
 			<Text>Description</Text>
 			<TextInput
-				multiline={ true }
-				numberOfLines={ 4 }
+				multiline
+				numberOfLines={ 6 }
 				value={ state.taskDescription }
 				onChangeText={ (text) => handleSetState('taskDescription', text) }
 				placeholder="Description"
 				style={ [styles.textInput, styles.textInputArea] }
 			/>
 
-
 			<TouchableOpacity
-				onPress={ () => createTask(state.taskTitle, state.taskDescription) }
+				onPress={ () => createTask(state.taskTitle, state.taskDescription, navigation) }
 				style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 			>
-				<Text style={ styles.textButton }>Créer la tâche</Text>
+				<Text style={ styles.textButton }>CREER LA TÂCHE</Text>
 			</TouchableOpacity>
 		</View>
 	)
@@ -57,14 +69,17 @@ export const CreateTask = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 10
+		flexDirection: 'column',
+
+		textAlign: 'center',
+		marginHorizontal: 10,
 	},
 
 	title: {
-		fontSize: 20,
+		fontSize: 25,
 		fontWeight: 'bold',
-		marginBottom: 15,
-		textAlign: 'center'
+		textAlign: 'center',
+		marginVertical: 20,
 	},
 
 	textButton: {
@@ -96,10 +111,19 @@ const styles = StyleSheet.create({
 	},
 
 	textInput: {
+		flex: 0.1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+
 		borderColor: '#e6e6e6',
 		borderWidth: 0.5,
+		borderRadius: 5,
+
+		minHeight: 40,
+
 		backgroundColor: '#fafafa',
-		width: 300,
+
 		marginBottom: 10,
 		marginTop: 5,
 		padding: 15
@@ -107,5 +131,7 @@ const styles = StyleSheet.create({
 
 	textInputArea: {
 		textAlignVertical: 'top',
+
+		minHeight: 100
 	},
 });

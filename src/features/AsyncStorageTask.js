@@ -16,6 +16,7 @@ const storeData = async (value) => {
 }
 
 const getData = async (key) => {
+	console.log("key : ", key)
 	try {
 		const jsonValue = await AsyncStorage.getItem(key)
 		return jsonValue != null ? JSON.parse(jsonValue) : null
@@ -57,7 +58,7 @@ const getAllTasks = async () => {
 
 		return allTask
 	} catch (error) {
-		console.log(error, "problemo")
+		console.log(error, "Il n'y a aucune tâche.")
 	}
 }
 
@@ -83,4 +84,14 @@ const clearAll = async () => {
 	console.log('Done.')
 }
 
-export { storeData, getData, getAllKeys, getMultiple, getAllTasks, clearAll }
+const removeValue = async (key) => {
+	try {
+		await AsyncStorage.removeItem(key)
+	} catch(e) {
+		console.log(e)
+	}
+
+	console.log('Done.')
+}
+
+export { storeData, getData, getAllKeys, getMultiple, getAllTasks, clearAll, removeValue }

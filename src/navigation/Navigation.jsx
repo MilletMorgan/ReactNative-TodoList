@@ -1,17 +1,23 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+
 import { CreateTask } from "../Screens/Tasks/CreateTask";
 import { GetAllTasks } from "../Screens/Tasks/GetAllTasks";
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 export const Navigation = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
+				activeColor="#f0edf6"
+				inactiveColor="#c792ea"
+				barStyle={{ backgroundColor: '#0F111A' }}
 				screenOptions={ ({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
@@ -26,7 +32,7 @@ export const Navigation = () => {
 								: 'ios-list'
 						}
 
-						return <Ionicons name={ iconName } size={ size } color={ color }/>
+						return <Ionicons name={ iconName } size={ 20 } color={ color }/>
 					}
 				}) }
 			>
