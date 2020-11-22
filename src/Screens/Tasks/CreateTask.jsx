@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { storeData } from "../../features/AsyncStorageTask";
 
-const createTask = (taskTitle, taskDescription, navigation) => {
+const actionCreateTask = (taskTitle, taskDescription, navigation) => {
 	const newTask = { taskTitle: taskTitle, taskDescription: taskDescription }
 
 	const ActionOnCreate = () => {
@@ -30,7 +30,7 @@ export const CreateTask = ({ navigation }) => {
 		taskDescription: '',
 	})
 
-	const handleSetState = (key, value) => {
+	const handleSetState =  (key, value) => {
 		setState({ ...state, [key]: value })
 	}
 
@@ -57,7 +57,11 @@ export const CreateTask = ({ navigation }) => {
 			/>
 
 			<TouchableOpacity
-				onPress={ () => createTask(state.taskTitle, state.taskDescription, navigation) }
+				onPress={ () => {
+					setState({ ...state, ['taskDescription']: '', ['taskTitle']: '' })
+
+					actionCreateTask(state.taskTitle, state.taskDescription, navigation)
+				} }
 				style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 			>
 				<Text style={ styles.textButton }>CREER LA TÂCHE</Text>

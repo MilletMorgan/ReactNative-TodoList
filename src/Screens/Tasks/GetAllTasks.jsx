@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getAllTasks, clearAll, removeValue } from "../../features/AsyncStorageTask";
 import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
-import { NavigationContainer } from '@react-navigation/native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faTrashAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+
 import { createStackNavigator } from '@react-navigation/stack';
 import { GetTask } from "./GetTask";
 
@@ -18,16 +18,13 @@ const Item = ({ item }) => {
 				<Text style={ styles.taskDescription }>{ item.taskInfo.taskDescription }</Text>
 			</View>
 			<View style={ styles.actions }>
-				<TouchableOpacity
-					onPress={ () => removeValue(item.taskKey) }
-				>
+				<TouchableOpacity onPress={ () => removeValue(item.taskKey) }>
 					<View>
 						<FontAwesomeIcon icon={ faTrashAlt } style={ styles.buttonTrash }/>
 					</View>
 				</TouchableOpacity>
 			</View>
 		</View>
-
 	)
 }
 
@@ -47,6 +44,14 @@ const GetAllTasksScreen = ({ navigation }) => {
 	return (
 		<View style={ styles.container }>
 			<Text style={ styles.title }>LISTES DES TÂCHES</Text>
+			<View style={ styles.info }>
+				<View style={ { flex: 0.1 } }>
+					<FontAwesomeIcon icon={ faInfoCircle } style={ styles.infoIcon }/>
+				</View>
+				<View style={ { flex: 0.9 } }>
+					<Text style={ styles.infoText }>Cliquer sur une tâche pour plus de détails.</Text>
+				</View>
+			</View>
 			<TouchableOpacity
 				onPress={ () => clearAll() }
 				style={ [styles.button, styles.buttonDelette, styles.shadow] }
@@ -117,6 +122,25 @@ const styles = StyleSheet.create({
 
 	infos: {
 		flex: 1,
+	},
+
+	info: {
+		flex: 0.1,
+		flexDirection: 'row',
+		alignItems: 'center',
+
+		padding: 15,
+
+		backgroundColor: "#717CB4",
+		borderRadius: 5,
+	},
+
+	infoText: {
+		color: "#FFF"
+	},
+
+	infoIcon: {
+		color: "#FFF"
 	},
 
 	actions: {
