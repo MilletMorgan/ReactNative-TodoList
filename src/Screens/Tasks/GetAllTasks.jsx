@@ -45,7 +45,11 @@ const Item = ({ item, functionPropNameHere }) => {
 					functionPropNameHere()
 				}
 				}>
-					<View>
+					<View style={{
+						backgroundColor: '#FFF',
+						padding: 5,
+						borderRadius: 1000,
+					}}>
 						<FontAwesomeIcon icon={ faTrashAlt } style={ MainStyles.buttonTrash }/>
 					</View>
 				</TouchableOpacity>

@@ -36,7 +36,6 @@ export const EditTask = ({ route, navigation }) => {
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
 	const [statut, setStatut] = useState('')
-	const [taskImportance, setTaskImportance] = useState('')
 
 	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
 
@@ -49,28 +48,6 @@ export const EditTask = ({ route, navigation }) => {
 			setTaskImportanceChoice(response.taskImportance)
 		}).catch(error => console.log(error))
 	}, [])
-
-	const ChangeStatut = () => {
-		if (statut === 'todo') {
-			return (
-				<TouchableOpacity
-					onPress={ () => setStatut('in-progress') }
-					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
-				>
-					<Text style={ styles.textButton }>IN PROGRESS</Text>
-				</TouchableOpacity>
-			)
-		} else if (statut === 'in-progress') {
-			return (
-				<TouchableOpacity
-					onPress={ () => setStatut('done') }
-					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
-				>
-					<Text style={ styles.textButton }>DONE</Text>
-				</TouchableOpacity>
-			)
-		} else return (<View/>)
-	}
 
 	return (
 		<View style={ styles.container }>
@@ -95,9 +72,17 @@ export const EditTask = ({ route, navigation }) => {
 					style={ [styles.textInput, styles.textInputArea] }
 				/>
 
-				<Text>Statut : { statut }</Text>
-
-				<ChangeStatut/>
+				<Text>Statut</Text>
+				<Picker
+					selectedValue={ statut }
+					style={ styles.textInput }
+					onValueChange={ itemValue =>
+						setStatut(itemValue)
+					}>
+					<Picker.Item label="En cours" value="todo"/>
+					<Picker.Item label="A faire" value="in-progress"/>
+					<Picker.Item label="Fait" value="done"/>
+				</Picker>
 
 				<Text>Ordre d'importance</Text>
 				<Picker
@@ -178,7 +163,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		borderRadius: 5,
 
-		minHeight: 40,
+		minHeight: 50,
 
 		backgroundColor: '#fafafa',
 

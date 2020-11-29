@@ -86,11 +86,13 @@ export const MainStyles = StyleSheet.create({
 	},
 
 	buttonDelette: {
-		backgroundColor: '#e88d8d',
+		backgroundColor: '#EC464F',
 	},
 
 	buttonTrash: {
-		color: '#e88d8d',
+
+
+		color: '#EC464F',
 		alignSelf: 'center',
 	},
 
