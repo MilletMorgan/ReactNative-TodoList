@@ -3,7 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "reac
 import { storeData } from "../../features/AsyncStorageTask";
 
 const actionCreateTask = (taskTitle, taskDescription, navigation) => {
-	const newTask = { taskTitle: taskTitle, taskDescription: taskDescription }
+	const newTask = {
+		taskTitle: taskTitle,
+		taskDescription: taskDescription,
+		taskStatut: 'todo'
+	}
 
 	const ActionOnCreate = () => {
 		Alert.alert(

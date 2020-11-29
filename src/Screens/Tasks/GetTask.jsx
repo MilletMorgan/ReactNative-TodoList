@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { getData } from "../../features/AsyncStorageTask";
 
 export const GetTask = (key) => {
 	const [title, setTitle] = useState('')
-	const [description, setDescription] = useState()
+	const [description, setDescription] = useState('')
 
 	useEffect(() => {
 		getData(key.route.params).then(response => {

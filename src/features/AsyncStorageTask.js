@@ -4,24 +4,35 @@ const storeData = async (value) => {
 	let key = await getAllKeys()
 
 	key = `@task${ key.length++ }`
-
-	console.log("key : ", key)
-
 	try {
 		const jsonValue = JSON.stringify(value)
 		await AsyncStorage.setItem(key, jsonValue)
 	} catch (e) {
-		console.log(e)
+		console.log('Error : ', e)
 	}
+
+	console.log("La tâche à bien été créer.")
+}
+
+const editData = async (key, value) => {
+	try {
+		const jsonValue = JSON.stringify(value)
+		await AsyncStorage.setItem(key, jsonValue)
+	} catch (e) {
+		console.log('Error : ', e)
+	}
+
+	console.log("La tâche à bien été editer.")
 }
 
 const getData = async (key) => {
-	console.log("key : ", key)
+
 	try {
 		const jsonValue = await AsyncStorage.getItem(key)
+		console.log("La tâche avec la clé key : ", key, " à bien été retourner.")
 		return jsonValue != null ? JSON.parse(jsonValue) : null
 	} catch (e) {
-		console.log(e)
+		console.log('Error : ', e)
 	}
 }
 
@@ -31,9 +42,9 @@ const getMultiple = async (keys) => {
 	try {
 		values = await AsyncStorage.multiGet(keys)
 	} catch (e) {
-		console.log(e)
+		console.log('Error : ', e)
 	}
-
+	console.log('Plusieurs tâches ont bien été retourner.')
 	return values
 }
 
@@ -51,14 +62,15 @@ const getAllTasks = async () => {
 				taskKey: key,
 				taskInfo: {
 					taskTitle: JSON.parse(value).taskTitle,
-					taskDescription: JSON.parse(value).taskDescription
+					taskDescription: JSON.parse(value).taskDescription,
+					taskStatut: JSON.parse(value).taskStatut,
 				}
 			})
 		})
-
+		console.log('Toutes les tâches ont été retourner.')
 		return allTask
 	} catch (error) {
-		console.log(error, "Il n'y a aucune tâche.")
+		console.log(error, " Il n'y a aucune tâche.")
 	}
 }
 
@@ -68,9 +80,10 @@ const getAllKeys = async () => {
 	try {
 		keys = await AsyncStorage.getAllKeys()
 	} catch (e) {
-		console.log(e)
+		console.log('Error : ', e)
 	}
 
+	console.log("Toutes les 'keys' ont été retourner.")
 	return keys
 }
 
@@ -78,20 +91,20 @@ const clearAll = async () => {
 	try {
 		await AsyncStorage.clear()
 	} catch (e) {
-		// clear error
+		console.log('ERROR : ', e)
 	}
 
-	console.log('Done.')
+	console.log('Toutes les tâches ont été effacé.')
 }
 
 const removeValue = async (key) => {
 	try {
 		await AsyncStorage.removeItem(key)
-	} catch(e) {
-		console.log(e)
+	} catch (e) {
+		console.log('Error : ', e)
 	}
 
-	console.log('Done.')
+	console.log('La tâche à bien été supprimer.')
 }
 
-export { storeData, getData, getAllKeys, getMultiple, getAllTasks, clearAll, removeValue }
+export { storeData, getData, getAllKeys, getMultiple, getAllTasks, clearAll, removeValue, editData }

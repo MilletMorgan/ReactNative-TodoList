@@ -8,6 +8,7 @@ import { CreateTask } from "../Screens/Tasks/CreateTask";
 import { GetAllTasks } from "../Screens/Tasks/GetAllTasks";
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { GetAllTasksNavigation } from "./GetAllTasksNavigation";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -37,7 +38,7 @@ export const Navigation = () => {
 				}) }
 			>
 				<Tab.Screen name="CreateTask" component={ CreateTask } options={ { title: 'Nouvelle tâche' } }/>
-				<Tab.Screen name="GetAllTasks" component={ GetAllTasks } options={ { title: 'Liste des tâches' } }/>
+				<Tab.Screen name="GetAllTasks" component={ GetAllTasksNavigation } options={ { title: 'Liste des tâches' } }/>
 			</Tab.Navigator>
 		</NavigationContainer>
 	);
