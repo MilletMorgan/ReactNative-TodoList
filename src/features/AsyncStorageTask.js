@@ -11,7 +11,7 @@ const storeData = async (value) => {
 		console.log('Error : ', e)
 	}
 
-	console.log("La tâche à bien été créer.")
+	console.log("La tâche à bien été créer. key : ", key)
 }
 
 const editData = async (key, value) => {
@@ -26,7 +26,6 @@ const editData = async (key, value) => {
 }
 
 const getData = async (key) => {
-
 	try {
 		const jsonValue = await AsyncStorage.getItem(key)
 		console.log("La tâche avec la clé key : ", key, " à bien été retourner.")
@@ -64,6 +63,7 @@ const getAllTasks = async () => {
 					taskTitle: JSON.parse(value).taskTitle,
 					taskDescription: JSON.parse(value).taskDescription,
 					taskStatut: JSON.parse(value).taskStatut,
+					taskImportance: JSON.parse(value).taskImportance,
 				}
 			})
 		})

@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { editData, getData } from "../../features/AsyncStorageTask";
+import { Picker } from "@react-native-picker/picker";
 
-const actionEditTask = (key, taskTitle, taskDescription, taskStatut, navigation) => {
-	const editTask = { taskTitle: taskTitle, taskDescription: taskDescription, taskStatut: taskStatut }
+const actionEditTask = (key, taskTitle, taskDescription, taskStatut,taskImportanceChoice, navigation) => {
+	const editTask = {
+		taskTitle: taskTitle,
+		taskDescription: taskDescription,
+		taskStatut: taskStatut ,
+		taskImportance: taskImportanceChoice
+	}
 
 	const ActionOnEdit = () => {
 		Alert.alert(
@@ -30,13 +36,17 @@ export const EditTask = ({ route, navigation }) => {
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
 	const [statut, setStatut] = useState('')
-	const [buttonTitle, setButtonTitle] = useState('')
+	const [taskImportance, setTaskImportance] = useState('')
+
+	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
+
 
 	useEffect(() => {
 		getData(route.params.key).then(response => {
 			setTitle(response.taskTitle)
 			setDescription(response.taskDescription)
 			setStatut(response.taskStatut)
+			setTaskImportanceChoice(response.taskImportance)
 		}).catch(error => console.log(error))
 	}, [])
 
@@ -50,8 +60,7 @@ export const EditTask = ({ route, navigation }) => {
 					<Text style={ styles.textButton }>IN PROGRESS</Text>
 				</TouchableOpacity>
 			)
-		}
-		else if (statut === 'in-progress') {
+		} else if (statut === 'in-progress') {
 			return (
 				<TouchableOpacity
 					onPress={ () => setStatut('done') }
@@ -60,9 +69,7 @@ export const EditTask = ({ route, navigation }) => {
 					<Text style={ styles.textButton }>DONE</Text>
 				</TouchableOpacity>
 			)
-		}
-		else
-			return (<View/>)
+		} else return (<View/>)
 	}
 
 	return (
@@ -92,9 +99,21 @@ export const EditTask = ({ route, navigation }) => {
 
 				<ChangeStatut/>
 
+				<Text>Ordre d'importance</Text>
+				<Picker
+					selectedValue={ taskImportanceChoice }
+					style={ styles.textInput }
+					onValueChange={ itemValue =>
+						setTaskImportanceChoice(itemValue)
+					}>
+					<Picker.Item label="Defaut" value="defaut"/>
+					<Picker.Item label="Mineur" value="mineur"/>
+					<Picker.Item label="Important" value="important"/>
+				</Picker>
+
 				<TouchableOpacity
 					onPress={ () => {
-						actionEditTask(route.params.key, title, description, statut, navigation)
+						actionEditTask(route.params.key, title, description, statut, taskImportanceChoice, navigation)
 					} }
 					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 				>

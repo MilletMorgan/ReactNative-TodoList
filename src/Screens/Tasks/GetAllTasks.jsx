@@ -20,12 +20,22 @@ import { EditTask } from "./EditTask";
 import { MainStyles } from "../../styles/MainStyles";
 
 const Item = ({ item, functionPropNameHere }) => {
+	let styleByImportance = item.taskInfo.taskImportance
+	let itemStyle
+
+	if (styleByImportance === 'important')
+		itemStyle = styles.important
+	else if (styleByImportance === 'mineur')
+		itemStyle = styles.mineur
+	else
+		itemStyle = styles.defaut
+
 	return (
-		<View style={ MainStyles.item }>
+		<View style={ [MainStyles.item, itemStyle] }>
 			<View style={ MainStyles.infos }>
 				<Text style={ MainStyles.taskTitle }>{ item.taskInfo.taskTitle }</Text>
 				<Text style={ MainStyles.taskDescription }>{ item.taskInfo.taskDescription }</Text>
-				<Text style={ MainStyles.taskDescription }>{ item.taskInfo.taskStatut }</Text>
+				<Text style={ MainStyles.taskDescription }>{ item.taskInfo.taskImportance}</Text>
 			</View>
 			<View style={ MainStyles.actions }>
 				<TouchableOpacity onPress={ () => {
@@ -140,7 +150,7 @@ export const GetAllTasks = ({ navigation }) => {
 			</View>
 			<TouchableOpacity
 				onPress={ () => {
-					clearAll()
+					clearAll().then(r => console.log("response : ", r))
 					ReloadData()
 				} }
 				style={ [MainStyles.button, MainStyles.buttonDelette, MainStyles.shadow] }
@@ -168,5 +178,17 @@ const styles = StyleSheet.create({
 	listTitle: {
 		fontWeight: 'bold',
 		fontSize: 18,
-	}
+	},
+
+	defaut: {
+
+	},
+
+	mineur: {
+		backgroundColor: "#717CB4",
+	},
+
+	important: {
+		backgroundColor: '#e88d8d',
+	},
 })

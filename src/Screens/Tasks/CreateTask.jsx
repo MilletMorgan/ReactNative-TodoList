@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { storeData } from "../../features/AsyncStorageTask";
 
-const actionCreateTask = (taskTitle, taskDescription, navigation) => {
+import { Picker } from '@react-native-picker/picker';
+
+const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, navigation) => {
 	const newTask = {
 		taskTitle: taskTitle,
 		taskDescription: taskDescription,
-		taskStatut: 'todo'
+		taskStatut: 'todo',
+		taskImportance: taskImportanceChoice,
 	}
 
 	const ActionOnCreate = () => {
@@ -32,9 +35,12 @@ export const CreateTask = ({ navigation }) => {
 	const [state, setState] = useState({
 		taskTitle: '',
 		taskDescription: '',
+		taskImportance: 'defaut'
 	})
 
-	const handleSetState =  (key, value) => {
+	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
+
+	const handleSetState = (key, value) => {
 		setState({ ...state, [key]: value })
 	}
 
@@ -60,11 +66,23 @@ export const CreateTask = ({ navigation }) => {
 				style={ [styles.textInput, styles.textInputArea] }
 			/>
 
+			<Text>Ordre d'importance</Text>
+			<Picker
+				selectedValue={ taskImportanceChoice }
+				style={ styles.textInput }
+				onValueChange={ itemValue =>
+					setTaskImportanceChoice(itemValue)
+				}>
+				<Picker.Item label="Defaut" value="defaut"/>
+				<Picker.Item label="Mineur" value="mineur"/>
+				<Picker.Item label="Important" value="important"/>
+			</Picker>
+
 			<TouchableOpacity
 				onPress={ () => {
 					setState({ ...state, ['taskDescription']: '', ['taskTitle']: '' })
 
-					actionCreateTask(state.taskTitle, state.taskDescription, navigation)
+					actionCreateTask(state.taskTitle, state.taskDescription, taskImportanceChoice, navigation)
 				} }
 				style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 			>

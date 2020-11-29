@@ -39,7 +39,7 @@ export const MainStyles = StyleSheet.create({
 	},
 
 	taskDescription: {
-		backgroundColor: '#fafafa',
+		// backgroundColor: '#fafafa',
 	},
 
 	infos: {
@@ -95,7 +95,6 @@ export const MainStyles = StyleSheet.create({
 	},
 
 	textButton: {
-
 		textAlign: 'center',
 		fontWeight: 'bold',
 		color: '#fff',
