@@ -90,8 +90,6 @@ export const MainStyles = StyleSheet.create({
 	},
 
 	buttonTrash: {
-
-
 		color: '#EC464F',
 		alignSelf: 'center',
 	},

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import { SafeAreaView, ScrollView, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { editData, getData } from "../../features/AsyncStorageTask";
 import { Picker } from "@react-native-picker/picker";
 
-const actionEditTask = (key, taskTitle, taskDescription, taskStatut,taskImportanceChoice, navigation) => {
+const actionEditTask = (key, taskTitle, taskDescription, taskStatut, taskImportanceChoice, user, navigation) => {
 	const editTask = {
 		taskTitle: taskTitle,
 		taskDescription: taskDescription,
-		taskStatut: taskStatut ,
-		taskImportance: taskImportanceChoice
+		taskStatut: taskStatut,
+		taskImportance: taskImportanceChoice,
+		taskUser: user
 	}
 
 	const ActionOnEdit = () => {
@@ -32,10 +33,10 @@ const actionEditTask = (key, taskTitle, taskDescription, taskStatut,taskImportan
 
 
 export const EditTask = ({ route, navigation }) => {
-
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
 	const [statut, setStatut] = useState('')
+	const [user, setUser] = useState('all')
 
 	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
 
@@ -50,8 +51,8 @@ export const EditTask = ({ route, navigation }) => {
 	}, [])
 
 	return (
-		<View style={ styles.container }>
-			<View style={ styles.container }>
+		<SafeAreaView style={ styles.container }>
+			<ScrollView>
 				<Text style={ styles.title }>MODIFIER LA TÂCHE</Text>
 
 				<Text>Titre</Text>
@@ -96,16 +97,29 @@ export const EditTask = ({ route, navigation }) => {
 					<Picker.Item label="Important" value="important"/>
 				</Picker>
 
+				<Text>Attribuer la tâche à un utilisateur</Text>
+				<Picker
+					selectedValue={ user }
+					style={ styles.textInput }
+					onValueChange={ itemValue =>
+						setUser(itemValue)
+					}>
+					<Picker.Item label="Toute l'équipe" value="all"/>
+					<Picker.Item label="Dev Ops" value="devOps"/>
+					<Picker.Item label="Dev mobile" value="devMobile"/>
+					<Picker.Item label="Dev Web" value="devWeb"/>
+				</Picker>
+
 				<TouchableOpacity
 					onPress={ () => {
-						actionEditTask(route.params.key, title, description, statut, taskImportanceChoice, navigation)
+						actionEditTask(route.params.key, title, description, statut, taskImportanceChoice, user, navigation)
 					} }
 					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 				>
 					<Text style={ styles.textButton }>MODIFIER LA TÂCHE</Text>
 				</TouchableOpacity>
-			</View>
-		</View>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
 

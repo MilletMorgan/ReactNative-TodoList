@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { storeData } from "../../features/AsyncStorageTask";
 
 import { Picker } from '@react-native-picker/picker';
 
-const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, navigation) => {
+const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, user, navigation) => {
 	const newTask = {
 		taskTitle: taskTitle,
 		taskDescription: taskDescription,
 		taskStatut: 'todo',
 		taskImportance: taskImportanceChoice,
+		taskUser: user,
 	}
 
 	const ActionOnCreate = () => {
@@ -32,63 +33,80 @@ const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, navi
 }
 
 export const CreateTask = ({ navigation }) => {
-	const [state, setState] = useState({
+	const [task, setTask] = useState({
 		taskTitle: '',
 		taskDescription: '',
 		taskImportance: 'defaut'
 	})
 
+	const [user, setUser] = useState('all')
+
 	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
 
 	const handleSetState = (key, value) => {
-		setState({ ...state, [key]: value })
+		setTask({ ...task, [key]: value })
 	}
 
 	return (
-		<View style={ styles.container }>
-			<Text style={ styles.title }>NOUVELLE TÂCHE</Text>
+		<SafeAreaView style={ styles.container }>
+			<ScrollView>
+				<Text style={ styles.title }>NOUVELLE TÂCHE</Text>
 
-			<Text>Titre</Text>
-			<TextInput
-				value={ state.taskTitle }
-				onChangeText={ (text) => handleSetState('taskTitle', text) }
-				placeholder="Titre"
-				style={ [styles.textInput] }
-			/>
+				<Text>Titre</Text>
+				<TextInput
+					value={ task.taskTitle }
+					onChangeText={ (text) => handleSetState('taskTitle', text) }
+					placeholder="Titre"
+					style={ [styles.textInput] }
+				/>
 
-			<Text>Description</Text>
-			<TextInput
-				multiline
-				numberOfLines={ 6 }
-				value={ state.taskDescription }
-				onChangeText={ (text) => handleSetState('taskDescription', text) }
-				placeholder="Description"
-				style={ [styles.textInput, styles.textInputArea] }
-			/>
+				<Text>Description</Text>
+				<TextInput
+					multiline
+					numberOfLines={ 6 }
+					value={ task.taskDescription }
+					onChangeText={ (text) => handleSetState('taskDescription', text) }
+					placeholder="Description"
+					style={ [styles.textInput, styles.textInputArea] }
+				/>
 
-			<Text>Ordre d'importance</Text>
-			<Picker
-				selectedValue={ taskImportanceChoice }
-				style={ styles.textInput }
-				onValueChange={ itemValue =>
-					setTaskImportanceChoice(itemValue)
-				}>
-				<Picker.Item label="Defaut" value="defaut"/>
-				<Picker.Item label="Mineur" value="mineur"/>
-				<Picker.Item label="Important" value="important"/>
-			</Picker>
+				<Text>Ordre d'importance</Text>
+				<Picker
+					selectedValue={ taskImportanceChoice }
+					style={ styles.textInput }
+					onValueChange={ itemValue =>
+						setTaskImportanceChoice(itemValue)
+					}>
+					<Picker.Item label="Defaut" value="defaut"/>
+					<Picker.Item label="Mineur" value="mineur"/>
+					<Picker.Item label="Important" value="important"/>
+				</Picker>
 
-			<TouchableOpacity
-				onPress={ () => {
-					setState({ ...state, ['taskDescription']: '', ['taskTitle']: '' })
+				<Text>Attribuer la tâche à un utilisateur</Text>
+				<Picker
+					selectedValue={ user }
+					style={ styles.textInput }
+					onValueChange={ itemValue =>
+						setUser(itemValue)
+					}>
+					<Picker.Item label="Toute l'équipe" value="all"/>
+					<Picker.Item label="Dev Ops" value="devOps"/>
+					<Picker.Item label="Dev mobile" value="devMobile"/>
+					<Picker.Item label="Dev Web" value="devWeb"/>
+				</Picker>
 
-					actionCreateTask(state.taskTitle, state.taskDescription, taskImportanceChoice, navigation)
-				} }
-				style={ [styles.button, styles.buttonSuccess, styles.shadow] }
-			>
-				<Text style={ styles.textButton }>CREER LA TÂCHE</Text>
-			</TouchableOpacity>
-		</View>
+				<TouchableOpacity
+					onPress={ () => {
+						setTask({ ...task, ['taskDescription']: '', ['taskTitle']: '' })
+
+						actionCreateTask(task.taskTitle, task.taskDescription, taskImportanceChoice, user, navigation)
+					} }
+					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
+				>
+					<Text style={ styles.textButton }>CREER LA TÂCHE</Text>
+				</TouchableOpacity>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
 
