@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState, useEffect } from 'react'
+import { View, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { storeData } from "../../features/AsyncStorageTask";
 
 import { Picker } from '@react-native-picker/picker';
 
-const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, user, navigation) => {
+import { DatePicker } from "../../components/DatePicker";
+
+import CheckBox from '@react-native-community/checkbox';
+
+const actionCreateTask = (taskTitle, taskDescription, taskImportanceChoice, user, dateLimite, navigation) => {
 	const newTask = {
 		taskTitle: taskTitle,
 		taskDescription: taskDescription,
 		taskStatut: 'todo',
 		taskImportance: taskImportanceChoice,
 		taskUser: user,
+		taskDateLimite: dateLimite
 	}
 
 	const ActionOnCreate = () => {
@@ -43,6 +48,34 @@ export const CreateTask = ({ navigation }) => {
 
 	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
 
+	const [dateLimite, setDateLimite] = useState({
+		jours: 0,
+		mois: 0,
+		annee: 0
+	})
+
+	const [showDatePicker, setShowDatePicker] = useState(false)
+
+	const hideDate = () => {
+		if (showDatePicker)
+			return { display: 'flex' }
+		else {
+
+			return { display: 'none' }
+		}
+	}
+
+	useEffect(() => {
+		hideDate()
+		if (!showDatePicker)
+			setDateLimite({
+				...dateLimite,
+				['jours']: 0,
+				['mois']: 0,
+				['annee']: 0
+			})
+	}, [showDatePicker])
+
 	const handleSetState = (key, value) => {
 		setTask({ ...task, [key]: value })
 	}
@@ -52,59 +85,88 @@ export const CreateTask = ({ navigation }) => {
 			<ScrollView>
 				<Text style={ styles.title }>NOUVELLE TÂCHE</Text>
 
-				<Text>Titre</Text>
-				<TextInput
-					value={ task.taskTitle }
-					onChangeText={ (text) => handleSetState('taskTitle', text) }
-					placeholder="Titre"
-					style={ [styles.textInput] }
-				/>
+				<View style={ styles.formGroup }>
+					<Text>Titre</Text>
+					<TextInput
+						value={ task.taskTitle }
+						onChangeText={ (text) => handleSetState('taskTitle', text) }
+						placeholder="Titre"
+						style={ [styles.textInput] }
+					/>
+				</View>
 
-				<Text>Description</Text>
-				<TextInput
-					multiline
-					numberOfLines={ 6 }
-					value={ task.taskDescription }
-					onChangeText={ (text) => handleSetState('taskDescription', text) }
-					placeholder="Description"
-					style={ [styles.textInput, styles.textInputArea] }
-				/>
+				<View style={ styles.formGroup }>
+					<Text>Description</Text>
+					<TextInput
+						multiline
+						numberOfLines={ 6 }
+						value={ task.taskDescription }
+						onChangeText={ (text) => handleSetState('taskDescription', text) }
+						placeholder="Description"
+						style={ [styles.textInput, styles.textInputArea] }
+					/>
+				</View>
 
-				<Text>Ordre d'importance</Text>
-				<Picker
-					selectedValue={ taskImportanceChoice }
-					style={ styles.textInput }
-					onValueChange={ itemValue =>
-						setTaskImportanceChoice(itemValue)
-					}>
-					<Picker.Item label="Defaut" value="defaut"/>
-					<Picker.Item label="Mineur" value="mineur"/>
-					<Picker.Item label="Important" value="important"/>
-				</Picker>
+				<View style={ styles.formGroup }>
+					<Text>Ordre d'importance</Text>
+					<View style={ styles.picker }>
+						<Picker
+							selectedValue={ taskImportanceChoice }
+							onValueChange={ itemValue =>
+								setTaskImportanceChoice(itemValue)
+							}>
+							<Picker.Item label="Defaut" value="defaut"/>
+							<Picker.Item label="Mineur" value="mineur"/>
+							<Picker.Item label="Important" value="important"/>
+						</Picker>
+					</View>
+				</View>
 
-				<Text>Attribuer la tâche à un utilisateur</Text>
-				<Picker
-					selectedValue={ user }
-					style={ styles.textInput }
-					onValueChange={ itemValue =>
-						setUser(itemValue)
-					}>
-					<Picker.Item label="Toute l'équipe" value="all"/>
-					<Picker.Item label="Dev Ops" value="devOps"/>
-					<Picker.Item label="Dev mobile" value="devMobile"/>
-					<Picker.Item label="Dev Web" value="devWeb"/>
-				</Picker>
+				<View style={ styles.formGroup }>
+					<Text>Attribuer la tâche à un utilisateur</Text>
+					<View style={ styles.picker }>
+						<Picker
+							selectedValue={ user }
+							onValueChange={ itemValue =>
+								setUser(itemValue)
+							}>
+							<Picker.Item label="Toute l'équipe" value="all" key={ user.length }/>
+							<Picker.Item label="Dev Ops" value="devOps"/>
+							<Picker.Item label="Dev mobile" value="devMobile"/>
+							<Picker.Item label="Dev Web" value="devWeb"/>
+						</Picker>
+					</View>
+				</View>
+
+				<View style={ styles.formGroup }>
+					<View style={ { flex: 1, flexDirection: 'row' } }>
+						<Text style={ { flex: 1 } }>
+							Ajouter une date limite ?
+						</Text>
+						<CheckBox
+							style={ { flex: 1 } }
+							disabled={ false }
+							value={ showDatePicker }
+							onValueChange={ (newValue) => setShowDatePicker(newValue) }
+						/>
+					</View>
+
+					<View style={ hideDate() }>
+						<DatePicker setDateLimite={setDateLimite.bind(this)} dateLimite={dateLimite}/>
+					</View>
+				</View>
 
 				<TouchableOpacity
 					onPress={ () => {
 						setTask({ ...task, ['taskDescription']: '', ['taskTitle']: '' })
 
-						actionCreateTask(task.taskTitle, task.taskDescription, taskImportanceChoice, user, navigation)
+						actionCreateTask(task.taskTitle, task.taskDescription, taskImportanceChoice, user, dateLimite, navigation)
 					} }
 					style={ [styles.button, styles.buttonSuccess, styles.shadow] }
 				>
 					<Text style={ styles.textButton }>CREER LA TÂCHE</Text>
 				</TouchableOpacity>
+
 			</ScrollView>
 		</SafeAreaView>
 	)
@@ -166,7 +228,6 @@ const styles = StyleSheet.create({
 
 		minHeight: 40,
 
-		backgroundColor: '#fafafa',
 
 		marginBottom: 10,
 		marginTop: 5,
@@ -177,5 +238,25 @@ const styles = StyleSheet.create({
 		textAlignVertical: 'top',
 
 		minHeight: 100
+	},
+
+	datePicker: {
+		flex: 1
+	},
+
+	picker: {
+		flex: 1,
+		borderWidth: 0.5,
+		borderColor: 'lightgrey',
+		borderRadius: 5,
+	},
+
+	formGroup: {
+		borderWidth: 0.5,
+		borderColor: 'lightgrey',
+		borderRadius: 5,
+		padding: 5,
+		marginBottom: 5,
+		backgroundColor: '#FFF'
 	},
 });

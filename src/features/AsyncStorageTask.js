@@ -65,6 +65,7 @@ const getAllTasks = async () => {
 					taskStatut: JSON.parse(value).taskStatut,
 					taskImportance: JSON.parse(value).taskImportance,
 					taskUser: JSON.parse(value).taskUser,
+					taskDateLimite: JSON.parse(value).taskDateLimite,
 				}
 			})
 		})

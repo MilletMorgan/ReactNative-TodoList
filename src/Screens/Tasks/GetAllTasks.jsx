@@ -13,10 +13,17 @@ const Item = ({ item, functionPropNameHere }) => {
 	let styleByImportance = item.taskInfo.taskImportance
 	let itemStyle
 
+	let date
+
 	if (styleByImportance === 'important')
 		itemStyle = styles.important
 	else if (styleByImportance === 'mineur')
 		itemStyle = styles.mineur
+
+	if (item.taskInfo.taskDateLimite.jours === 0)
+		date = 'Aucune date limite'
+	else
+		date = 'Date limite : ' + item.taskInfo.taskDateLimite.jours + '/' + item.taskInfo.taskDateLimite.mois + '/' + item.taskInfo.taskDateLimite.annee
 
 	return (
 		<View style={ [styles.item, itemStyle] }>
@@ -24,6 +31,7 @@ const Item = ({ item, functionPropNameHere }) => {
 				<Text style={ styles.taskTitle }>{ item.taskInfo.taskTitle }</Text>
 				<Text style={ styles.taskDescription }>{ item.taskInfo.taskDescription }</Text>
 				<Text style={ styles.taskDescription }>{ item.taskInfo.taskUser }</Text>
+				<Text>{ date }</Text>
 			</View>
 			<View style={ styles.actions }>
 				<TouchableOpacity onPress={ () => {
@@ -163,7 +171,6 @@ export const GetAllTasks = ({ navigation }) => {
 				<View style={ styles.selectPicker }>
 					<Picker
 						selectedValue={ user }
-						style={ styles.textInput }
 						onValueChange={ itemValue =>
 							setUser(itemValue)
 						}>
@@ -172,15 +179,6 @@ export const GetAllTasks = ({ navigation }) => {
 						<Picker.Item label="Dev mobile" value="devMobile"/>
 						<Picker.Item label="Dev Web" value="devWeb"/>
 					</Picker>
-				</View>
-				<View style={ styles.arrowPicker }>
-					<View style={ {
-						backgroundColor: '#FFF',
-						padding: 5,
-						borderRadius: 1000,
-					} }>
-						<FontAwesomeIcon icon={ faSortDown } style={ styles.buttonSortDown }/>
-					</View>
 				</View>
 			</View>
 
@@ -340,8 +338,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		paddingLeft: 20,
-		paddingRight: 20,
+		padding: 5,
 		marginBottom: 10,
 		borderColor: '#e6e6e6',
 		borderRadius: 5,
@@ -355,9 +352,8 @@ const styles = StyleSheet.create({
 
 	selectPicker: {
 		flex: 1,
+		borderWidth: 0.5,
+		borderColor: 'lightgrey',
+		borderRadius: 5,
 	},
-
-	arrowPicker: {
-		flex: 0.1
-	}
 })
