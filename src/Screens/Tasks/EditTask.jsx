@@ -33,13 +33,12 @@ const actionEditTask = (key, taskTitle, taskDescription, taskStatut, taskImporta
 
 
 export const EditTask = ({ route, navigation }) => {
-	const [title, setTitle] = useState('')
-	const [description, setDescription] = useState('')
-	const [statut, setStatut] = useState('')
-	const [user, setUser] = useState('all')
+	const [title, setTitle] = useState()
+	const [description, setDescription] = useState()
+	const [statut, setStatut] = useState()
+	const [user, setUser] = useState()
 
 	const [taskImportanceChoice, setTaskImportanceChoice] = useState('defaut')
-
 
 	useEffect(() => {
 		getData(route.params.key).then(response => {
@@ -47,6 +46,7 @@ export const EditTask = ({ route, navigation }) => {
 			setDescription(response.taskDescription)
 			setStatut(response.taskStatut)
 			setTaskImportanceChoice(response.taskImportance)
+			setUser(response.taskUser)
 		}).catch(error => console.log(error))
 	}, [])
 

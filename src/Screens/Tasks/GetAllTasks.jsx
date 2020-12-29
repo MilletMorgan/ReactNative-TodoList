@@ -23,11 +23,12 @@ const Item = ({ item, functionPropNameHere }) => {
 			<View style={ styles.infos }>
 				<Text style={ styles.taskTitle }>{ item.taskInfo.taskTitle }</Text>
 				<Text style={ styles.taskDescription }>{ item.taskInfo.taskDescription }</Text>
+				<Text style={ styles.taskDescription }>{ item.taskInfo.taskUser }</Text>
 			</View>
 			<View style={ styles.actions }>
 				<TouchableOpacity onPress={ () => {
 					removeValue(item.taskKey)
-						.then(r => console.log("response : ", r))
+						.then()
 						.catch(error => console.log("error : ", error))
 					functionPropNameHere()
 				}
@@ -51,9 +52,19 @@ export const GetAllTasks = ({ navigation }) => {
 	const [tasksDone, setTasksDone] = useState([])
 	const [user, setUser] = useState('all')
 
+	const [hideInfo, setHideInfo] = useState({})
+
+	const [timeout, setTimout] = useState(5)
+
 	useEffect(() => {
 		return navigation.addListener('focus', () => {
 			ReloadData()
+			setHideInfo({ display: 'flex' })
+			setTimout(5)
+
+			setTimeout(() => {
+				setHideInfo({ display: 'none' })
+			}, 5000)
 		})
 	}, [navigation])
 
@@ -61,12 +72,40 @@ export const GetAllTasks = ({ navigation }) => {
 		ReloadData()
 	}, [user])
 
+	useEffect(() => {
+		setTimeout(() => {
+			if (timeout === 0)
+				setHideInfo({ display: 'none' })
+			if (timeout === 5)
+				setTimout(timeout - 1)
+		}, 5000)
+	}, [])
+
+	useEffect(() => {
+		setTimeout(() => {
+			if (timeout >= 1)
+				setTimout(timeout - 1)
+		}, 1000)
+	}, [timeout])
+
 	const ReloadData = () => {
 		getAllTasks().then(response => {
-			setTasksTodo(response.filter(statut => statut.taskInfo.taskStatut === 'todo').filter(task => task.taskInfo.taskUser === user))
-			setTasksInProgress(response.filter(statut => statut.taskInfo.taskStatut === 'in-progress').filter(task => task.taskInfo.taskUser === user))
-			setTasksDone(response.filter(statut => statut.taskInfo.taskStatut === 'done').filter(task => task.taskInfo.taskUser === user))
-		}).catch(error => console.log("ERROR : ", error))
+			setTasksTodo(response.filter(statut => statut.taskInfo.taskStatut === 'todo').filter(task => {
+				if (task.taskInfo.taskUser !== 'all')
+					return task.taskInfo.taskUser === user
+				return 'all'
+			}))
+			setTasksInProgress(response.filter(statut => statut.taskInfo.taskStatut === 'in-progress').filter(task => {
+				if (task.taskInfo.taskUser !== 'all')
+					return task.taskInfo.taskUser === user
+				return 'all'
+			}))
+			setTasksDone(response.filter(statut => statut.taskInfo.taskStatut === 'done').filter(task => {
+				if (task.taskInfo.taskUser !== 'all')
+					return task.taskInfo.taskUser === user
+				return 'all'
+			}))
+		}).catch(error => console.log("ReloadData getAllTaks, ERROR : ", error))
 	}
 
 	const renderItem = ({ item }) => (
@@ -96,18 +135,19 @@ export const GetAllTasks = ({ navigation }) => {
 
 	return (
 		<View style={ styles.container }>
-			<View style={ styles.info }>
+			<View style={ [styles.info, hideInfo] }>
 				<View style={ { flex: 0.1 } }>
 					<FontAwesomeIcon icon={ faInfoCircle } style={ styles.infoIcon }/>
 				</View>
 				<View style={ { flex: 0.9 } }>
 					<Text style={ styles.infoText }>Cliquer sur une tâche pour plus de détails.</Text>
 					<Text style={ styles.infoText }>Laisser appuyer pour mettre à jour la tâche.</Text>
+					<Text style={ styles.timeout }>{ timeout }</Text>
 				</View>
 			</View>
 			<TouchableOpacity
 				onPress={ () => {
-				clearAll().then(r => console.log("response : ", r))
+					clearAll().then()
 					ReloadData()
 				} }
 				style={ [styles.button, styles.buttonDelette, styles.shadow] }
@@ -117,9 +157,10 @@ export const GetAllTasks = ({ navigation }) => {
 				</Text>
 			</TouchableOpacity>
 
-			<Text>Filtrer les tâches par utilisateur</Text>
-			<View style={ styles.picker }>
-				<View style={ styles.infos }>
+			<View style={ styles.pickerArea }>
+				<Text style={ styles.textPicker }>Filtrer les tâches par utilisateur</Text>
+
+				<View style={ styles.selectPicker }>
 					<Picker
 						selectedValue={ user }
 						style={ styles.textInput }
@@ -132,7 +173,7 @@ export const GetAllTasks = ({ navigation }) => {
 						<Picker.Item label="Dev Web" value="devWeb"/>
 					</Picker>
 				</View>
-				<View style={ styles.actions }>
+				<View style={ styles.arrowPicker }>
 					<View style={ {
 						backgroundColor: '#FFF',
 						padding: 5,
@@ -204,7 +245,7 @@ const styles = StyleSheet.create({
 
 	taskDescription: {
 		fontStyle: 'italic',
-		color: '#8F93A2'
+		color: '#343434'
 	},
 
 	infos: {
@@ -212,13 +253,23 @@ const styles = StyleSheet.create({
 	},
 
 	info: {
-		flex: 0.1,
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 15,
+		padding: 10,
 		backgroundColor: "#717CB4",
 		borderRadius: 5,
 		marginVertical: 10,
+	},
+
+	timeout: {
+		backgroundColor: '#FFF',
+		textAlign: 'right',
+		width: 18,
+		paddingLeft: 5,
+		paddingRight: 5,
+		marginLeft: 'auto',
+
+		borderRadius: 100,
 	},
 
 	infoText: {
@@ -285,16 +336,28 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fafafa',
 	},
 
-	picker: {
-		flex: 0.5,
+	pickerArea: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingLeft: 20,
 		paddingRight: 20,
+		marginBottom: 10,
 		borderColor: '#e6e6e6',
 		borderRadius: 5,
 		borderWidth: 0.5,
 		backgroundColor: '#fafafa',
 	},
+
+	textPicker: {
+		flex: 1
+	},
+
+	selectPicker: {
+		flex: 1,
+	},
+
+	arrowPicker: {
+		flex: 0.1
+	}
 })

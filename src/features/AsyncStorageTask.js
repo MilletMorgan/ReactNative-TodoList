@@ -68,7 +68,6 @@ const getAllTasks = async () => {
 				}
 			})
 		})
-		console.log('Toutes les tâches ont été retourner.')
 		return allTask
 	} catch (error) {
 		console.log(error, " Il n'y a aucune tâche.")
